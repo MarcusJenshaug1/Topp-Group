@@ -63,6 +63,17 @@
         background: rgba(11, 15, 20, 0.06);
         margin: 20px 0;
       }
+      .temp-pass {
+        display: inline-block;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: #f3f4f6;
+        font-family: "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        color: #111827;
+      }
     </style>
   </head>
   <body>
@@ -76,9 +87,9 @@
           Du har blitt invitert til å få tilgang til Topp Group sin dokumentportal.
           Du får et midlertidig passord under og må velge et nytt passord ved første innlogging.
         </p>
+        <p><strong>Midlertidig passord</strong></p>
         <p>
-          <strong>Midlertidig passord:</strong>
-          <span>{{ .Data.temp_password }}</span>
+          <span class="temp-pass">{{ .Data.temp_password }}</span>
         </p>
         <p>
           <a class="cta" href="{{ .ConfirmationURL }}">Bekreft e-post</a>

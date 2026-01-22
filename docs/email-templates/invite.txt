@@ -1,6 +1,6 @@
 Du er invitert til Topp Group sin dokumentportal.
 
-Midlertidig passord:
+MIDLERTIDIG PASSORD:
 {{ .Data.temp_password }}
 
 Bekreft e-post her:

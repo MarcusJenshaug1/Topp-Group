@@ -88,6 +88,7 @@ export async function sendInviteEmail(formData: FormData) {
     if (userId) {
         await admin.auth.admin.updateUserById(userId, {
             password: tempPassword,
+            email_confirm: true,
             user_metadata: {
                 full_name: fullName || null,
                 must_change_password: true,
