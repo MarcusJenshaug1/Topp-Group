@@ -36,7 +36,11 @@ export async function getDocumentUrl(filePath: string, mode: 'preview' | 'downlo
     redirect(data.signedUrl)
 }
 
-export async function getDocumentSignedUrl(filePath: string) {
+export async function getDocumentSignedUrl(
+    filePath: string,
+    mode: 'preview' | 'download' = 'preview',
+    fileName?: string
+) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("Unauthorized")
@@ -44,7 +48,9 @@ export async function getDocumentSignedUrl(filePath: string) {
     const { data, error } = await supabase
         .storage
         .from('toppgroup')
-        .createSignedUrl(filePath, 3600) // 1 hour for preview
+        .createSignedUrl(filePath, 3600, {
+            download: mode === 'download' ? (fileName || true) : false,
+        }) // 1 hour signed URL
 
     if (error || !data?.signedUrl) return null
     return data.signedUrl

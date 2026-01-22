@@ -61,7 +61,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+    // Skip API routes so API calls don't get redirected by auth middleware
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        '/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 }

@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Plus, Download, Trash, Lock } from "lucide-react"
+import { Plus, Pencil, Lock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { deleteDocument } from "@/app/admin/documents-actions"
 
 export default async function AdminDocumentsPage() {
     const supabase = await createClient()
@@ -53,13 +54,29 @@ export default async function AdminDocumentsPage() {
                                 </span>
                             </div>
                             <div className="col-span-3 flex justify-end gap-2 pr-2">
-                                {/* Download Button via server action or signed url logic needed */}
-                                <Button variant="ghost" size="icon" className="hover:bg-surface-muted hover:text-primary">
-                                    <Download className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10">
-                                    <Trash className="h-4 w-4" />
-                                </Button>
+                                <Link href={`/admin/dokumenter/${doc.id}`} prefetch={false}>
+                                    <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        className="gap-2 cursor-pointer hover:bg-surface-muted/80"
+                                        aria-label="Rediger eller last opp ny versjon"
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                        Rediger
+                                    </Button>
+                                </Link>
+                                <form action={deleteDocument}>
+                                    <input type="hidden" name="document_id" value={doc.id} />
+                                    <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        className="gap-2"
+                                        aria-label="Slett dokument"
+                                        type="submit"
+                                    >
+                                        Slett
+                                    </Button>
+                                </form>
                             </div>
                         </div>
                     ))

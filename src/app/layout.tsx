@@ -24,6 +24,7 @@ export default function RootLayout({
     <html lang="no" suppressHydrationWarning>
       <body
         id="top"
+        suppressHydrationWarning
         className={`${fontSans.variable} antialiased min-h-screen flex flex-col`}
       >
         <Header />

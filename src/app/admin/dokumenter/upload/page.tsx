@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { uploadDocument } from "@/app/admin/documents-actions"
+import { uploadDocument, createCategory } from "@/app/admin/documents-actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -40,6 +40,7 @@ export default async function UploadDocumentPage() {
                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </select>
+                    <div className="text-xs text-muted-foreground">Trenger du en ny kategori? Legg den til under.</div>
                 </div>
 
                 <div className="space-y-2">
@@ -73,6 +74,21 @@ export default async function UploadDocumentPage() {
                     <Button type="submit">Last opp</Button>
                 </div>
             </form>
+
+            <div className="border rounded-lg bg-card p-6">
+                <h2 className="text-lg font-semibold mb-3">Legg til kategori</h2>
+                <p className="text-sm text-muted-foreground mb-4">Opprett nye kategorier for å organisere dokumentene bedre.</p>
+                <form action={createCategory} className="flex flex-col gap-3 sm:flex-row" aria-label="Legg til kategori">
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Ny kategori"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        required
+                    />
+                    <Button type="submit" variant="secondary" className="sm:w-auto">Legg til</Button>
+                </form>
+            </div>
         </div>
     )
 }
