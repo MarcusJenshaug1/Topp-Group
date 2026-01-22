@@ -34,6 +34,20 @@ export function ResetPasswordForm() {
                 return
             }
 
+            const tokenHashParam = searchParams.get("token_hash")
+            const typeParam = searchParams.get("type")
+            if (tokenHashParam && typeParam) {
+                const { error: verifyHashError } = await supabase.auth.verifyOtp({
+                    token_hash: tokenHashParam,
+                    type: typeParam === "recovery" ? "recovery" : "magiclink",
+                })
+                if (verifyHashError) {
+                    setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                }
+                setReady(true)
+                return
+            }
+
             const token = searchParams.get("token")
             const type = searchParams.get("type")
             const email = searchParams.get("email")
@@ -83,7 +97,11 @@ export function ResetPasswordForm() {
                 }
             }
 
-            setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+            if (searchParams.get("error") || searchParams.get("error_code")) {
+                setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+            } else {
+                setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+            }
             setReady(true)
         }
 
