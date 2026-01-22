@@ -22,15 +22,43 @@ export function ResetPasswordForm() {
 
     useEffect(() => {
         const init = async () => {
-            const { data } = await supabase.auth.getSession()
-            if (!data.session) {
-                setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+            setError(null)
+
+            const code = searchParams.get("code")
+            if (code) {
+                const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+                if (exchangeError) {
+                    setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                }
+                setReady(true)
+                return
             }
+
+            if (typeof window !== "undefined") {
+                const hash = window.location.hash.replace(/^#/, "")
+                const params = new URLSearchParams(hash)
+                const accessToken = params.get("access_token")
+                const refreshToken = params.get("refresh_token")
+
+                if (accessToken && refreshToken) {
+                    const { error: setErrorSession } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                    })
+                    if (setErrorSession) {
+                        setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                    }
+                    setReady(true)
+                    return
+                }
+            }
+
+            setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
             setReady(true)
         }
 
         init()
-    }, [supabase])
+    }, [supabase, searchParams])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

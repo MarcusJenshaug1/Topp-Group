@@ -70,10 +70,11 @@ export function ProfileMenu({ user, role, avatarUrl, fullName }: ProfileMenuProp
     }, [isOpen])
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
         setIsOpen(false)
+        await supabase.auth.signOut()
+        await fetch("/auth/signout", { method: "POST" })
         router.refresh()
-        router.push('/')
+        router.push("/portal/login")
     }
 
     return (
