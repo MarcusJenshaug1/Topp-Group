@@ -59,6 +59,16 @@ export async function middleware(request: NextRequest) {
             url.pathname = '/portal/login'
             return NextResponse.redirect(url)
         }
+
+        const hasPassword = Boolean(user.user_metadata?.has_password)
+        const isCompleteRoute = request.nextUrl.pathname.startsWith('/portal/complete')
+        const isResetRoute = request.nextUrl.pathname.startsWith('/portal/reset')
+
+        if (!hasPassword && !isCompleteRoute && !isResetRoute) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/portal/complete'
+            return NextResponse.redirect(url)
+        }
     }
 
     return supabaseResponse

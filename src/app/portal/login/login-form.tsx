@@ -24,15 +24,9 @@ export function LoginForm() {
 
     useEffect(() => {
         const emailParam = searchParams.get("email")
-        const inviteParam = searchParams.get("invite")
 
         if (emailParam) {
             setEmail(emailParam)
-        }
-
-        if (inviteParam === "1") {
-            setStage("invite")
-            setInfo("E-posten din er verifisert. Klikk Fullfør konto for å få tilsendt en lenke.")
         }
     }, [searchParams])
 
@@ -63,7 +57,7 @@ export function LoginForm() {
 
             if (data.status === "invited") {
                 setStage("invite")
-                setInfo("Du er invitert. Vi sender en lenke til e-posten din.")
+                setInfo("Du er invitert. Vi sender en innloggingslenke på e-post.")
                 return
             }
 
@@ -89,6 +83,7 @@ export function LoginForm() {
             if (error) {
                 setError(error.message)
             } else {
+                await supabase.auth.updateUser({ data: { has_password: true } })
                 router.refresh()
                 router.push("/portal")
             }
@@ -119,7 +114,7 @@ export function LoginForm() {
             }
 
             setInviteSent(true)
-            setInfo("Vi har sendt deg en lenke på e‑post. Åpne den for å sette passord.")
+            setInfo("Vi har sendt deg en innloggingslenke. Åpne den for å fortsette.")
             router.push(`/portal/invite-sent?email=${encodeURIComponent(email)}`)
         } catch {
             setError("Noe gikk galt. Prøv igjen.")
@@ -167,13 +162,13 @@ export function LoginForm() {
                             {inviteSent && "Vi har sendt en lenke for å fullføre registreringen."}
                             {!inviteSent && stage === "email" && "Skriv inn e-posten din for å fortsette."}
                             {!inviteSent && stage === "password" && "Skriv inn passordet ditt for å få tilgang til portalen."}
-                            {!inviteSent && stage === "invite" && "Vi sender deg en lenke for å fullføre registreringen."}
+                            {!inviteSent && stage === "invite" && "Vi sender deg en innloggingslenke for å fullføre registreringen."}
                         </CardDescription>
                     </CardHeader>
                     {inviteSent ? (
                         <CardContent className="space-y-3">
                             <div className="bg-surface-muted text-sm p-3 rounded-md">
-                                {info || "Sjekk innboksen din og åpne lenken for å sette passord."}
+                                {info || "Sjekk innboksen din og åpne lenken for å fortsette."}
                             </div>
                             <div className="text-sm text-muted-foreground">
                                 Fikk du ikke e‑post? Sjekk søppelpost eller vent et par minutter.

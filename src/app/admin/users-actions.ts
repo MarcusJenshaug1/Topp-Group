@@ -49,9 +49,7 @@ export async function sendInviteEmail(formData: FormData) {
 
     const admin = createAdminClient()
     const origin = (await headers()).get("origin") || ""
-    const redirectTo = origin
-        ? `${origin}/portal/login?email=${encodeURIComponent(email)}&invite=1`
-        : undefined
+    const redirectTo = origin ? `${origin}/portal` : undefined
 
     const { data: existingProfile } = await admin
         .from("profiles")

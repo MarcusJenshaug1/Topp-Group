@@ -104,6 +104,11 @@ export function CompleteAccountForm() {
                 }
             }
 
+            const { data } = await supabase.auth.getSession()
+            if (!data.session) {
+                setError("Du må logge inn via magic‑link for å sette passord.")
+            }
+            setShowOtpFields(false)
             setReady(true)
         }
 
@@ -156,12 +161,15 @@ export function CompleteAccountForm() {
             } else {
                 const { data } = await supabase.auth.getSession()
                 if (!data.session) {
-                    setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                    setError("Du må logge inn via magic‑link for å sette passord.")
                     return
                 }
             }
 
-            const { error: updateError } = await supabase.auth.updateUser({ password })
+            const { error: updateError } = await supabase.auth.updateUser({
+                password,
+                data: { has_password: true },
+            })
             if (updateError) {
                 setError(updateError.message)
                 return
