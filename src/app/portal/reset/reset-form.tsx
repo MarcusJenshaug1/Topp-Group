@@ -34,6 +34,22 @@ export function ResetPasswordForm() {
                 return
             }
 
+            const token = searchParams.get("token")
+            const type = searchParams.get("type")
+            const email = searchParams.get("email")
+            if (token && type) {
+                const { error: verifyError } = await supabase.auth.verifyOtp({
+                    token,
+                    type: type === "recovery" ? "recovery" : "email",
+                    ...(email ? { email } : {}),
+                })
+                if (verifyError) {
+                    setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                }
+                setReady(true)
+                return
+            }
+
             if (typeof window !== "undefined") {
                 const hash = window.location.hash.replace(/^#/, "")
                 const params = new URLSearchParams(hash)
