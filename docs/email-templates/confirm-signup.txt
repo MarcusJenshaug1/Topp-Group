@@ -1,0 +1,8 @@
+Bekreft e-postadressen din for å aktivere kontoen.
+
+Bekreft e-post her:
+{{ .ConfirmationURL }}
+
+Hvis du ikke opprettet en konto, kan du trygt ignorere denne e-posten.
+
+© 2026 Topp Group. Alle rettigheter reservert.

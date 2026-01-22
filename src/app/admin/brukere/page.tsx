@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { inviteUser, updateUserRole, updateUserName, deleteUser, uploadUserAvatar } from "@/app/admin/users-actions"
+import { createUserSilently, sendInviteEmail, updateUserRole, updateUserName, deleteUser, uploadUserAvatar } from "@/app/admin/users-actions"
 
 export default async function AdminUsersPage() {
     const supabase = await createClient()
@@ -24,6 +24,7 @@ export default async function AdminUsersPage() {
         role: string | null
         created_at: string
         last_sign_in_at?: string | null
+        invited_at?: string | null
     }>
 
     let adminError: string | null = null
@@ -45,6 +46,7 @@ export default async function AdminUsersPage() {
                 role: profile.role || "viewer",
                 created_at: profile.created_at,
                 last_sign_in_at: authUser?.last_sign_in_at || null,
+                invited_at: authUser?.invited_at || null,
             }
         })
     } catch (error) {
@@ -76,7 +78,7 @@ export default async function AdminUsersPage() {
                     <CardTitle className="text-base">Legg til bruker</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form action={inviteUser} className="grid gap-4 lg:grid-cols-[2fr,2fr,1fr,auto]">
+                    <form action={sendInviteEmail} className="grid gap-4 lg:grid-cols-[2fr,2fr,1fr,auto]">
                         <div className="space-y-1">
                             <label className="text-xs font-medium text-muted-foreground">E-post</label>
                             <Input name="email" type="email" placeholder="E-post" required />
@@ -101,6 +103,9 @@ export default async function AdminUsersPage() {
                             <Button type="submit" className="whitespace-nowrap">Send invitasjon</Button>
                         </div>
                     </form>
+                    <p className="mt-3 text-xs text-muted-foreground">
+                        Inviterte brukere verifiserer e-post og fullfører konto med engangskode.
+                    </p>
                 </CardContent>
             </Card>
 
@@ -138,6 +143,16 @@ export default async function AdminUsersPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
+                                        {!user.last_sign_in_at && user.email && (
+                                            <form action={sendInviteEmail}>
+                                                <input type="hidden" name="email" value={user.email} />
+                                                <input type="hidden" name="full_name" value={user.full_name || ""} />
+                                                <input type="hidden" name="role" value={user.role || "viewer"} />
+                                                <Button variant="secondary" size="sm">
+                                                    {user.invited_at ? "Send invitasjon på nytt" : "Send invitasjon"}
+                                                </Button>
+                                            </form>
+                                        )}
                                         <Badge variant="secondary" className="uppercase text-[10px] tracking-wide">{user.role}</Badge>
                                         <form action={deleteUser}>
                                             <input type="hidden" name="user_id" value={user.id} />
@@ -180,7 +195,6 @@ export default async function AdminUsersPage() {
 
                                     <form
                                         action={uploadUserAvatar}
-                                        encType="multipart/form-data"
                                         className="rounded-lg border border-border/60 bg-surface-muted/40 p-4 flex flex-col gap-3"
                                     >
                                         <input type="hidden" name="user_id" value={user.id} />

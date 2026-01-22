@@ -1,0 +1,6 @@
+Bekreft endring av e-postadressen din:
+{{ .ConfirmationURL }}
+
+Hvis du ikke ba om dette, kan du kontakte oss.
+
+© 2026 Topp Group. Alle rettigheter reservert.

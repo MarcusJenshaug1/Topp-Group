@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Velkommen til Topp Group</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f6f7f9;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        color: #0b0f14;
+      }
+      .container {
+        max-width: 600px;
+        margin: 32px auto;
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(11, 15, 20, 0.08);
+      }
+      .header {
+        padding: 28px 32px 20px;
+        border-bottom: 1px solid rgba(11, 15, 20, 0.06);
+      }
+      .brand {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+      .content {
+        padding: 28px 32px 32px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0 0 12px;
+      }
+      p {
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0 0 16px;
+        color: #5b6472;
+      }
+      .cta {
+        display: inline-block;
+        background: #1f2937;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .footer {
+        padding: 18px 32px 26px;
+        font-size: 12px;
+        color: #8a93a3;
+        border-top: 1px solid rgba(11, 15, 20, 0.06);
+      }
+      .divider {
+        height: 1px;
+        background: rgba(11, 15, 20, 0.06);
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="brand">Topp Group</div>
+      </div>
+      <div class="content">
+        <h1>Du er invitert til dokumentportalen</h1>
+        <p>
+          Du har blitt invitert til å få tilgang til Topp Group sin dokumentportal.
+          Klikk på knappen under for å aktivere kontoen din.
+        </p>
+        <p>
+          <a class="cta" href="{{ .ConfirmationURL }}">Aktiver konto</a>
+        </p>
+        <div class="divider"></div>
+        <p>
+          Hvis du ikke forventet denne invitasjonen, kan du trygt ignorere denne e-posten.
+        </p>
+      </div>
+      <div class="footer">
+        © 2026 Topp Group. Alle rettigheter reservert.
+      </div>
+    </div>
+  </body>
+</html>

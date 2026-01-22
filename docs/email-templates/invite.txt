@@ -1,0 +1,8 @@
+Du er invitert til Topp Group sin dokumentportal.
+
+Aktiver kontoen din her:
+{{ .ConfirmationURL }}
+
+Hvis du ikke forventet denne invitasjonen, kan du trygt ignorere denne e-posten.
+
+© 2026 Topp Group. Alle rettigheter reservert.

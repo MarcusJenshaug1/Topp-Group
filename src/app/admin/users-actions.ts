@@ -1,9 +1,10 @@
 'use server'
 
 import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
 import { createAdminClient } from "@/lib/supabase/admin"
 
-export async function inviteUser(formData: FormData) {
+export async function createUserSilently(formData: FormData) {
     const email = (formData.get("email") as string)?.trim()
     const fullName = (formData.get("full_name") as string)?.trim()
     const role = (formData.get("role") as string)?.trim() || "viewer"
@@ -14,11 +15,72 @@ export async function inviteUser(formData: FormData) {
 
     const admin = createAdminClient()
 
-    const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-        data: { full_name: fullName || null },
+    const { data, error } = await admin.auth.admin.createUser({
+        email,
+        email_confirm: false,
+        user_metadata: { full_name: fullName || null },
     })
 
     if (error) {
+        throw new Error(error.message)
+    }
+
+    const userId = data?.user?.id
+    if (userId) {
+        await admin.from("profiles").upsert({
+            id: userId,
+            email,
+            role,
+            full_name: fullName || null,
+        })
+    }
+
+    revalidatePath("/admin/brukere")
+}
+
+export async function sendInviteEmail(formData: FormData) {
+    const email = (formData.get("email") as string)?.trim()
+    const fullName = (formData.get("full_name") as string)?.trim()
+    const role = (formData.get("role") as string)?.trim() || "viewer"
+
+    if (!email) {
+        throw new Error("E-post er påkrevd")
+    }
+
+    const admin = createAdminClient()
+    const origin = (await headers()).get("origin") || ""
+    const redirectTo = origin
+        ? `${origin}/portal/login?email=${encodeURIComponent(email)}&invite=1`
+        : undefined
+
+    const { data: existingProfile } = await admin
+        .from("profiles")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle()
+
+    if (existingProfile?.id) {
+        const { data: userData } = await admin.auth.admin.getUserById(existingProfile.id)
+        const invitedAt = userData?.user?.invited_at ? new Date(userData.user.invited_at) : null
+        if (invitedAt) {
+            const minutesSinceInvite = (Date.now() - invitedAt.getTime()) / (1000 * 60)
+            if (minutesSinceInvite < 10) {
+                revalidatePath("/admin/brukere")
+                return
+            }
+        }
+    }
+
+    const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+        data: { full_name: fullName || null },
+        ...(redirectTo ? { redirectTo } : {}),
+    })
+
+    if (error) {
+        if (error.message.toLowerCase().includes("rate limit")) {
+            revalidatePath("/admin/brukere")
+            return
+        }
         throw new Error(error.message)
     }
 
@@ -130,10 +192,26 @@ export async function deleteUser(formData: FormData) {
     }
 
     const admin = createAdminClient()
-    const { error } = await admin.auth.admin.deleteUser(userId)
+    const { data: profile } = await admin
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", userId)
+        .maybeSingle()
 
-    if (error) {
-        throw new Error(error.message)
+    if (profile?.avatar_url) {
+        await admin.storage.from("toppgroup").remove([profile.avatar_url])
+    }
+
+    const { error: deleteProfileError } = await admin.from("profiles").delete().eq("id", userId)
+
+    if (deleteProfileError) {
+        throw new Error(deleteProfileError.message)
+    }
+
+    const { error: deleteAuthError } = await admin.auth.admin.deleteUser(userId)
+
+    if (deleteAuthError) {
+        throw new Error(deleteAuthError.message)
     }
 
     revalidatePath("/admin/brukere")

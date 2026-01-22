@@ -1,0 +1,6 @@
+Klikk på lenken under for å logge inn:
+{{ .ConfirmationURL }}
+
+Hvis du ikke ba om denne lenken, kan du trygt ignorere denne e-posten.
+
+© 2026 Topp Group. Alle rettigheter reservert.
