@@ -1,0 +1,37 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Motion" />
+
+# Motion System
+
+Subtle, premium motion that supports hierarchy and clarity without distraction.
+
+## Tokens
+
+- `--motion-fast`: 160ms (hover, micro-interactions)
+- `--motion-base`: 220ms (most UI transitions)
+- `--motion-slow`: 360ms (enter/reveal)
+- `--ease-premium`: cubic-bezier(0.16, 1, 0.3, 1)
+
+## Principles
+
+- Use motion once to guide attention, not continuously.
+- Keep distances small (2–10px) and opacity shifts gentle.
+- Prefer transforms + opacity for performance.
+
+## Do
+
+- Use `Reveal` for sections and grids.
+- Use `motion-card`, `motion-button`, and `motion-image` utilities.
+- Respect reduced motion (`prefers-reduced-motion`).
+
+## Don’t
+
+- No bouncing, elastic, or looping animations.
+- No large parallax or full-page fades.
+- Don’t animate long lists row-by-row.
+
+## Reduced Motion
+
+- Use the `.reduce-motion` helper in Storybook stories.
+- In the app, reduced motion automatically disables reveals and transforms.

@@ -1,0 +1,82 @@
+@layer base {
+  :root {
+    /* Base Colors - Scandinavian Premium Palette */
+    --color-background: #FAFAFB;
+    /* Near white for main bg */
+    --color-surface: #FFFFFF;
+    /* Pure white for cards */
+    --color-surface-muted: #F3F5F7;
+    /* Subtle section bg */
+    --color-surface-dark: #1D2430;
+    /* Dark surface for contrast cards */
+
+    /* Ink / Typography */
+    --color-text: #0B0F14;
+    /* Primary Ink (Near Black) */
+    --color-text-muted: #5B6472;
+    /* Secondary Ink */
+    --color-text-inverse: #FFFFFF;
+    /* Text on dark backgrounds */
+
+    /* Borders & Dividers */
+    --color-border: rgba(11, 15, 20, 0.08);
+
+    /* Accents & States */
+    --color-primary: #1F2937;
+    /* Dark slate/charcoal as primary brand */
+    --color-primary-foreground: #FFFFFF;
+
+    --color-accent: #2B5CFF;
+    /* Digital blue for key interactions */
+    --color-accent-foreground: #FFFFFF;
+
+    --color-secondary: #F3F5F7;
+    --color-secondary-foreground: #1D2430;
+
+    --color-destructive: #EF4444;
+    --color-destructive-foreground: #FFFFFF;
+
+    --color-muted: #F3F5F7;
+    --color-muted-foreground: #64748B;
+
+    --color-card: #FFFFFF;
+    --color-card-foreground: #0B0F14;
+
+    --color-popover: #FFFFFF;
+    --color-popover-foreground: #0B0F14;
+
+    /* Specific Interaction Tokens */
+    --color-hover-dark: #2E3745;
+    /* Mandatory dark hover state */
+    --color-ring: rgba(43, 92, 255, 0.4);
+    /* Focus ring color */
+
+    /* Radius */
+    --radius-sm: 0.375rem;
+    /* 6px */
+    --radius-md: 0.5rem;
+    /* 8px */
+    --radius-lg: 0.75rem;
+    /* 12px */
+    --radius-xl: 1rem;
+    /* 16px */
+    --radius-full: 9999px;
+
+    /* Motion Tokens */
+    --motion-fast: 160ms;
+    --motion-base: 220ms;
+    --motion-slow: 360ms;
+    --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Dark Mode support (not fully used yet but consistent) */
+  .dark {
+    --color-background: #0B0F14;
+    --color-surface: #1D2430;
+    --color-text: #FFFFFF;
+    --color-text-muted: #94A3B8;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-surface-muted: #131922;
+    --color-hover-dark: #374151;
+  }
+}

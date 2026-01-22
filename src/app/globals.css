@@ -1,0 +1,303 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@theme {
+  /* Colors mapping from tokens.css */
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-text);
+  --color-surface: var(--color-surface);
+
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
+  --color-muted: var(--color-secondary);
+  --color-muted-foreground: var(--color-text-muted);
+
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+
+  --color-border: var(--color-border);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
+
+  --color-card: var(--color-background);
+  --color-card-foreground: var(--color-text);
+
+  /* Custom semantic colors */
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-hover-dark: var(--color-hover-dark);
+
+  /* Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer utilities {
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-safe\:fade-up {
+      opacity: 0;
+      transform: translateY(6px);
+      transition:
+        opacity var(--motion-slow) var(--ease-premium),
+        transform var(--motion-slow) var(--ease-premium);
+    }
+
+    .motion-safe\:fade-up.motion-safe\:in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .motion-safe\:fade {
+      opacity: 0;
+      transition: opacity var(--motion-slow) var(--ease-premium);
+    }
+
+    .motion-safe\:fade.motion-safe\:in {
+      opacity: 1;
+    }
+  }
+
+  .page-enter {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: page-enter var(--motion-slow) var(--ease-premium) forwards;
+  }
+
+  .motion-card {
+    transition:
+      transform var(--motion-base) var(--ease-premium),
+      box-shadow var(--motion-base) var(--ease-premium),
+      border-color var(--motion-base) var(--ease-premium),
+      background-color var(--motion-base) var(--ease-premium);
+    will-change: transform;
+  }
+
+  .motion-button {
+    transition:
+      transform var(--motion-fast) var(--ease-premium),
+      box-shadow var(--motion-fast) var(--ease-premium),
+      background-color var(--motion-fast) var(--ease-premium),
+      border-color var(--motion-fast) var(--ease-premium),
+      color var(--motion-fast) var(--ease-premium);
+  }
+
+  .motion-input {
+    transition:
+      border-color var(--motion-fast) var(--ease-premium),
+      box-shadow var(--motion-fast) var(--ease-premium),
+      background-color var(--motion-fast) var(--ease-premium),
+      color var(--motion-fast) var(--ease-premium);
+  }
+
+  .motion-image {
+    transition: transform var(--motion-slow) var(--ease-premium);
+    will-change: transform;
+  }
+
+  .motion-icon {
+    transition: transform var(--motion-fast) var(--ease-premium), color var(--motion-fast) var(--ease-premium);
+  }
+
+  .motion-header {
+    transition: box-shadow var(--motion-fast) var(--ease-premium), background-color var(--motion-fast) var(--ease-premium);
+  }
+
+  .motion-pill {
+    transition:
+      background-color var(--motion-fast) var(--ease-premium),
+      border-color var(--motion-fast) var(--ease-premium),
+      color var(--motion-fast) var(--ease-premium);
+  }
+
+  .btn-arrow .btn-arrow-icon {
+    transition: transform var(--motion-fast) var(--ease-premium);
+  }
+
+  .btn-arrow:hover .btn-arrow-icon {
+    transform: translateX(2px);
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size var(--motion-fast) var(--ease-premium), color var(--motion-fast) var(--ease-premium);
+  }
+
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+
+  .link-underline.is-active {
+    background-size: 100% 1px;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity var(--motion-slow) var(--ease-premium),
+      transform var(--motion-slow) var(--ease-premium);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-fade {
+    transform: none;
+  }
+
+  .reveal-fade-left {
+    transform: translateX(-8px);
+  }
+
+  .reveal-fade-right {
+    transform: translateX(8px);
+  }
+
+  .motion-overlay {
+    opacity: 0;
+    animation: overlay-in var(--motion-base) var(--ease-premium) forwards;
+  }
+
+  .motion-panel {
+    transform: translateY(6px) scale(0.98);
+    opacity: 0;
+    animation: panel-in var(--motion-base) var(--ease-premium) forwards;
+  }
+
+  .motion-dropdown {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: dropdown-in var(--motion-base) var(--ease-premium) forwards;
+  }
+
+  .reduce-motion,
+  .reduce-motion * {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal,
+  .reveal.reveal-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .motion-card,
+  .motion-button,
+  .motion-image,
+  .motion-input,
+  .motion-icon {
+    transition: none !important;
+  }
+
+  .motion-overlay,
+  .motion-panel,
+  .motion-dropdown {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .motion-card:hover,
+  .motion-button:active,
+  .btn-arrow:hover .btn-arrow-icon,
+  .group:hover .motion-image {
+    transform: none !important;
+  }
+
+  .animate-spin {
+    animation: none !important;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
