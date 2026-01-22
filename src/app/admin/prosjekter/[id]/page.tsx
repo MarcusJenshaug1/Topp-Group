@@ -72,22 +72,25 @@ export default async function EditProjectPage(props: { params: Params }) {
                     {(revisions || []).length === 0 ? (
                         <p className="py-3 text-sm text-muted-foreground">Ingen revisjoner enda.</p>
                     ) : (
-                        (revisions || []).map((rev) => (
-                            <div key={rev.id} className="py-3 text-sm">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Badge variant="outline" className="capitalize">{rev.action}</Badge>
-                                        <span className="text-muted-foreground text-xs">{rev.user?.display_name || rev.user?.email || 'ukjent'}</span>
+                        (revisions || []).map((rev) => {
+                            const revUser = Array.isArray(rev.user) ? rev.user[0] : rev.user
+                            return (
+                                <div key={rev.id} className="py-3 text-sm">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant="outline" className="capitalize">{rev.action}</Badge>
+                                            <span className="text-muted-foreground text-xs">{revUser?.full_name || revUser?.display_name || revUser?.email || 'ukjent'}</span>
+                                        </div>
+                                        <span className="text-xs text-muted-foreground">
+                                            {new Date(rev.created_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' })}
+                                        </span>
                                     </div>
-                                    <span className="text-xs text-muted-foreground">
-                                        {new Date(rev.created_at).toLocaleString('no-NO', { dateStyle: 'short', timeStyle: 'short' })}
-                                    </span>
+                                    {rev.payload && (
+                                        <p className="text-xs text-muted-foreground mt-1 truncate">{JSON.stringify(rev.payload)}</p>
+                                    )}
                                 </div>
-                                {rev.payload && (
-                                    <p className="text-xs text-muted-foreground mt-1 truncate">{JSON.stringify(rev.payload)}</p>
-                                )}
-                            </div>
-                        ))
+                            )
+                        })
                     )}
                 </div>
             </div>
