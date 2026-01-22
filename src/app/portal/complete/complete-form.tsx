@@ -39,6 +39,51 @@ export function CompleteAccountForm() {
                 return
             }
 
+            const tokenParam = searchParams.get("token")
+            const typeParam = searchParams.get("type")
+            const emailParam = searchParams.get("email")
+
+            if (tokenParam && typeParam) {
+                if (typeParam === "magiclink" && emailParam) {
+                    const { error: verifyError } = await supabase.auth.verifyOtp({
+                        token: tokenParam,
+                        type: "magiclink",
+                        email: emailParam,
+                    })
+                    if (verifyError) {
+                        setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                    }
+                    setShowOtpFields(false)
+                    setReady(true)
+                    return
+                }
+
+                if (typeParam === "email" && emailParam) {
+                    const { error: verifyError } = await supabase.auth.verifyOtp({
+                        token: tokenParam,
+                        type: "email",
+                        email: emailParam,
+                    })
+                    if (verifyError) {
+                        setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                    }
+                    setShowOtpFields(false)
+                    setReady(true)
+                    return
+                }
+
+                const { error: verifyHashError } = await supabase.auth.verifyOtp({
+                    token_hash: tokenParam,
+                    type: typeParam === "recovery" ? "recovery" : "magiclink",
+                })
+                if (verifyHashError) {
+                    setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                }
+                setShowOtpFields(false)
+                setReady(true)
+                return
+            }
+
             if (typeof window !== "undefined") {
                 const hash = window.location.hash.replace(/^#/, "")
                 const params = new URLSearchParams(hash)

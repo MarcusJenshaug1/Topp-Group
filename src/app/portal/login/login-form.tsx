@@ -16,6 +16,7 @@ export function LoginForm() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [info, setInfo] = useState<string | null>(null)
+    const [inviteSent, setInviteSent] = useState(false)
 
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -102,6 +103,7 @@ export function LoginForm() {
         e.preventDefault()
         setLoading(true)
         setError(null)
+        setInfo(null)
 
         try {
             const { error } = await supabase.auth.signInWithOtp({
@@ -116,6 +118,8 @@ export function LoginForm() {
                 return
             }
 
+            setInviteSent(true)
+            setInfo("Vi har sendt deg en lenke på e‑post. Åpne den for å sette passord.")
             router.push(`/portal/invite-sent?email=${encodeURIComponent(email)}`)
         } catch {
             setError("Noe gikk galt. Prøv igjen.")
@@ -157,91 +161,103 @@ export function LoginForm() {
                 <Card>
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold">
-                            {stage === "invite" ? "Fullfør konto" : "Logg inn"}
+                            {inviteSent ? "Sjekk e‑posten din" : stage === "invite" ? "Fullfør konto" : "Logg inn"}
                         </CardTitle>
                         <CardDescription>
-                            {stage === "email" && "Skriv inn e-posten din for å fortsette."}
-                            {stage === "password" && "Skriv inn passordet ditt for å få tilgang til portalen."}
-                            {stage === "invite" && "Vi sender deg en lenke for å fullføre registreringen."}
+                            {inviteSent && "Vi har sendt en lenke for å fullføre registreringen."}
+                            {!inviteSent && stage === "email" && "Skriv inn e-posten din for å fortsette."}
+                            {!inviteSent && stage === "password" && "Skriv inn passordet ditt for å få tilgang til portalen."}
+                            {!inviteSent && stage === "invite" && "Vi sender deg en lenke for å fullføre registreringen."}
                         </CardDescription>
                     </CardHeader>
-                    <form onSubmit={stage === "password" ? handleLogin : stage === "invite" ? handleInvite : handleEmailCheck}>
-                        <CardContent className="space-y-4">
-                            {error && (
-                                <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md flex items-center gap-2">
-                                    <AlertCircle className="h-4 w-4" />
-                                    {error}
-                                </div>
-                            )}
-                            {info && (
-                                <div className="bg-surface-muted text-sm p-3 rounded-md">
-                                    {info}
-                                </div>
-                            )}
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                    E-post
-                                </label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="navn@bedrift.no"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    readOnly={stage !== "email"}
-                                    required
-                                />
+                    {inviteSent ? (
+                        <CardContent className="space-y-3">
+                            <div className="bg-surface-muted text-sm p-3 rounded-md">
+                                {info || "Sjekk innboksen din og åpne lenken for å sette passord."}
                             </div>
-                            {stage !== "email" && (
-                                <div className="flex items-center justify-between text-sm">
-                                    <button
-                                        type="button"
-                                        className="text-primary hover:underline"
-                                        onClick={() => {
-                                            setStage("email")
-                                            setPassword("")
-                                            setError(null)
-                                            setInfo(null)
-                                        }}
-                                    >
-                                        Bytt e-post
-                                    </button>
-                                </div>
-                            )}
-
-                            {stage === "password" && (
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                            Passord
-                                        </label>
-                                        <button
-                                            type="button"
-                                            className="text-sm text-primary hover:underline"
-                                            onClick={handleResetPassword}
-                                        >
-                                            Glemt passord?
-                                        </button>
+                            <div className="text-sm text-muted-foreground">
+                                Fikk du ikke e‑post? Sjekk søppelpost eller vent et par minutter.
+                            </div>
+                        </CardContent>
+                    ) : (
+                        <form onSubmit={stage === "password" ? handleLogin : stage === "invite" ? handleInvite : handleEmailCheck}>
+                            <CardContent className="space-y-4">
+                                {error && (
+                                    <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md flex items-center gap-2">
+                                        <AlertCircle className="h-4 w-4" />
+                                        {error}
                                     </div>
+                                )}
+                                {info && (
+                                    <div className="bg-surface-muted text-sm p-3 rounded-md">
+                                        {info}
+                                    </div>
+                                )}
+                                <div className="space-y-2">
+                                    <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                        E-post
+                                    </label>
                                     <Input
-                                        id="password"
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        id="email"
+                                        type="email"
+                                        placeholder="navn@bedrift.no"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        readOnly={stage !== "email"}
                                         required
                                     />
                                 </div>
-                            )}
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit" className="w-full" disabled={loading}>
-                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {stage === "email" && "Fortsett"}
-                                {stage === "password" && "Logg inn"}
-                                {stage === "invite" && "Fullfør konto"}
-                            </Button>
-                        </CardFooter>
-                    </form>
+                                {stage !== "email" && (
+                                    <div className="flex items-center justify-between text-sm">
+                                        <button
+                                            type="button"
+                                            className="text-primary hover:underline"
+                                            onClick={() => {
+                                                setStage("email")
+                                                setPassword("")
+                                                setError(null)
+                                                setInfo(null)
+                                            }}
+                                        >
+                                            Bytt e-post
+                                        </button>
+                                    </div>
+                                )}
+
+                                {stage === "password" && (
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                Passord
+                                            </label>
+                                            <button
+                                                type="button"
+                                                className="text-sm text-primary hover:underline"
+                                                onClick={handleResetPassword}
+                                            >
+                                                Glemt passord?
+                                            </button>
+                                        </div>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                )}
+                            </CardContent>
+                            <CardFooter>
+                                <Button type="submit" className="w-full" disabled={loading}>
+                                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    {stage === "email" && "Fortsett"}
+                                    {stage === "password" && "Logg inn"}
+                                    {stage === "invite" && "Fullfør konto"}
+                                </Button>
+                            </CardFooter>
+                        </form>
+                    )}
                 </Card>
             </Container>
         </div>
