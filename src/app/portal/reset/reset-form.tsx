@@ -38,16 +38,30 @@ export function ResetPasswordForm() {
             const type = searchParams.get("type")
             const email = searchParams.get("email")
             if (token && type) {
-                const { error: verifyError } = await supabase.auth.verifyOtp({
-                    token,
-                    type: type === "recovery" ? "recovery" : "email",
-                    ...(email ? { email } : {}),
-                })
-                if (verifyError) {
-                    setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                if (type === "recovery") {
+                    const { error: verifyError } = await supabase.auth.verifyOtp({
+                        token_hash: token,
+                        type: "recovery",
+                    })
+                    if (verifyError) {
+                        setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                    }
+                    setReady(true)
+                    return
                 }
-                setReady(true)
-                return
+
+                if (email) {
+                    const { error: verifyError } = await supabase.auth.verifyOtp({
+                        token,
+                        type: "email",
+                        email,
+                    })
+                    if (verifyError) {
+                        setError("Lenken er ugyldig eller utløpt. Be om ny passordlenke.")
+                    }
+                    setReady(true)
+                    return
+                }
             }
 
             if (typeof window !== "undefined") {
