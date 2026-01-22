@@ -40,7 +40,11 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/profil')
     ) {
         // Allow login page
-        if (request.nextUrl.pathname === '/portal/login') {
+        if (
+            request.nextUrl.pathname === '/portal/login' ||
+            request.nextUrl.pathname === '/portal/reset' ||
+            request.nextUrl.pathname === '/portal/complete'
+        ) {
             if (user) {
                 // Redirect to portal if already logged in
                 const url = request.nextUrl.clone()
