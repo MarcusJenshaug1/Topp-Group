@@ -12,6 +12,12 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const FadeUp: Story = {
+    args: {
+        children: "Reveal item",
+        variant: "fadeUp",
+        stagger: 60,
+        index: 0,
+    },
     render: () => (
         <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -26,6 +32,12 @@ export const FadeUp: Story = {
 }
 
 export const ReducedMotion: Story = {
+    args: {
+        children: "Reduced motion item",
+        variant: "fadeUp",
+        stagger: 60,
+        index: 0,
+    },
     render: () => (
         <div className="reduce-motion space-y-4">
             {Array.from({ length: 3 }).map((_, index) => (

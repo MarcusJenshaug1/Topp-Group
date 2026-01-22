@@ -36,7 +36,7 @@ export function ProfileMenu({ user, role, avatarUrl, fullName }: ProfileMenuProp
         .split(/\s|@/)
         .filter(Boolean)
         .slice(0, 2)
-        .map((part) => part[0])
+        .map((part: string) => part[0] || '')
         .join('')
         .toUpperCase()
 

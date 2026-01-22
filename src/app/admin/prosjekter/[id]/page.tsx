@@ -73,7 +73,7 @@ export default async function EditProjectPage(props: { params: Params }) {
                         <p className="py-3 text-sm text-muted-foreground">Ingen revisjoner enda.</p>
                     ) : (
                         (revisions || []).map((rev) => {
-                            const revUser = Array.isArray(rev.user) ? rev.user[0] : rev.user
+                            const revUser = (Array.isArray(rev.user) ? rev.user[0] : rev.user) as any
                             return (
                                 <div key={rev.id} className="py-3 text-sm">
                                     <div className="flex items-center justify-between">

@@ -12,6 +12,9 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+    args: {
+        children: "Page enter content",
+    },
     render: () => (
         <PageEnter>
             <div className="rounded-lg border border-border bg-surface p-6 shadow-sm">
@@ -29,6 +32,9 @@ export const Default: Story = {
 }
 
 export const ReducedMotion: Story = {
+    args: {
+        children: "Reduced motion content",
+    },
     render: () => (
         <div className="reduce-motion">
             <PageEnter>

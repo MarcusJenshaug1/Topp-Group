@@ -27,13 +27,31 @@ const mockUser = {
 } as User
 
 export const LoggedOut: Story = {
-    render: () => <HeaderClient user={null} role={null} />,
+    args: {
+        user: null,
+        role: null,
+        avatarUrl: null,
+        fullName: null,
+    },
+    render: () => <HeaderClient user={null} role={null} avatarUrl={null} fullName={null} />,
 }
 
 export const LoggedInViewer: Story = {
-    render: () => <HeaderClient user={mockUser} role="viewer" />,
+    args: {
+        user: mockUser,
+        role: "viewer",
+        avatarUrl: null,
+        fullName: mockUser.user_metadata?.full_name ?? null,
+    },
+    render: () => <HeaderClient user={mockUser} role="viewer" avatarUrl={null} fullName={mockUser.user_metadata?.full_name ?? null} />,
 }
 
 export const LoggedInAdmin: Story = {
-    render: () => <HeaderClient user={mockUser} role="admin" />,
+    args: {
+        user: mockUser,
+        role: "admin",
+        avatarUrl: null,
+        fullName: mockUser.user_metadata?.full_name ?? null,
+    },
+    render: () => <HeaderClient user={mockUser} role="admin" avatarUrl={null} fullName={mockUser.user_metadata?.full_name ?? null} />,
 }

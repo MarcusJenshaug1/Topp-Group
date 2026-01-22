@@ -41,7 +41,7 @@ export function PropertyFilterBar({ categories, activeCategoryId }: PropertyFilt
         })
     }
 
-    const spring = { type: "spring", stiffness: 420, damping: 36 }
+    const spring = { type: "spring" as const, stiffness: 420, damping: 36 }
 
     const renderButton = (label: string, id?: string) => {
         const isActive = (id || "") === selected

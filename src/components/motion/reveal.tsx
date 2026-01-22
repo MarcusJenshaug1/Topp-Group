@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import type { JSX } from "react"
 import { cn } from "@/lib/utils"
 import { usePrefersReducedMotion } from "@/lib/hooks/use-prefers-reduced-motion"
 
@@ -36,7 +37,7 @@ export function Reveal({
 }: RevealProps) {
     const prefersReducedMotion = usePrefersReducedMotion()
     const [isVisible, setIsVisible] = React.useState(prefersReducedMotion)
-    const elementRef = React.useRef<HTMLElement | null>(null)
+    const elementRef = React.useRef<any>(null)
 
     React.useEffect(() => {
         if (prefersReducedMotion) {
@@ -63,13 +64,15 @@ export function Reveal({
 
     const totalDelay = delay + index * stagger
 
+    const ComponentTag = Comp as React.ElementType
+
     return (
-        <Comp
-            ref={elementRef as React.RefObject<HTMLElement>}
+        <ComponentTag
+            ref={elementRef}
             className={cn("reveal", variantClassMap[variant], isVisible && "reveal-visible", className)}
             style={{ "--reveal-delay": `${totalDelay}ms` } as React.CSSProperties}
         >
             {children}
-        </Comp>
+        </ComponentTag>
     )
 }
