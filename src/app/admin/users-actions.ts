@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
+import crypto from "crypto"
 import { createAdminClient } from "@/lib/supabase/admin"
 
 export async function createUserSilently(formData: FormData) {
@@ -48,6 +49,7 @@ export async function sendInviteEmail(formData: FormData) {
     }
 
     const admin = createAdminClient()
+    const tempPassword = crypto.randomBytes(9).toString("base64url")
     const origin = (await headers()).get("origin") || ""
     const redirectTo = origin ? `${origin}/portal` : undefined
 
@@ -70,7 +72,7 @@ export async function sendInviteEmail(formData: FormData) {
     }
 
     const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-        data: { full_name: fullName || null },
+        data: { full_name: fullName || null, temp_password: tempPassword },
         ...(redirectTo ? { redirectTo } : {}),
     })
 
@@ -84,6 +86,15 @@ export async function sendInviteEmail(formData: FormData) {
 
     const userId = data?.user?.id
     if (userId) {
+        await admin.auth.admin.updateUserById(userId, {
+            password: tempPassword,
+            user_metadata: {
+                full_name: fullName || null,
+                must_change_password: true,
+                has_password: false,
+            },
+        })
+
         await admin.from("profiles").upsert({
             id: userId,
             email,

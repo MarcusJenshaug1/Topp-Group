@@ -40,11 +40,7 @@ export async function middleware(request: NextRequest) {
         request.nextUrl.pathname.startsWith('/profil')
     ) {
         // Allow login page
-        if (
-            request.nextUrl.pathname === '/portal/login' ||
-            request.nextUrl.pathname === '/portal/reset' ||
-            request.nextUrl.pathname === '/portal/complete'
-        ) {
+        if (request.nextUrl.pathname === '/portal/login') {
             if (user) {
                 // Redirect to portal if already logged in
                 const url = request.nextUrl.clone()
@@ -60,11 +56,11 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(url)
         }
 
-        const hasPassword = Boolean(user.user_metadata?.has_password)
+        const mustChangePassword = Boolean(user.user_metadata?.must_change_password)
         const isCompleteRoute = request.nextUrl.pathname.startsWith('/portal/complete')
         const isResetRoute = request.nextUrl.pathname.startsWith('/portal/reset')
 
-        if (!hasPassword && !isCompleteRoute && !isResetRoute) {
+        if (mustChangePassword && !isCompleteRoute && !isResetRoute) {
             const url = request.nextUrl.clone()
             url.pathname = '/portal/complete'
             return NextResponse.redirect(url)

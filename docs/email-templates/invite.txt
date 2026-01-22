@@ -1,9 +1,12 @@
 Du er invitert til Topp Group sin dokumentportal.
 
-Klikk her for å starte registreringen:
+Midlertidig passord:
+{{ .Data.temp_password }}
+
+Bekreft e-post her:
 {{ .ConfirmationURL }}
 
-Etter at du har klikket, sender vi deg en ny lenke på e-post for å sette passord.
+Etter bekreftelse kan du logge inn med passordet over og velge nytt passord.
 
 Hvis du ikke forventet denne invitasjonen, kan du trygt ignorere denne e-posten.
 

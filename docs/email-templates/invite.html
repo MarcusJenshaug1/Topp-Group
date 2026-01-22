@@ -74,14 +74,18 @@
         <h1>Du er invitert til dokumentportalen</h1>
         <p>
           Du har blitt invitert til å få tilgang til Topp Group sin dokumentportal.
-          Klikk på knappen under for å starte registreringen.
+          Du får et midlertidig passord under og må velge et nytt passord ved første innlogging.
         </p>
         <p>
-          <a class="cta" href="{{ .ConfirmationURL }}">Fullfør konto</a>
+          <strong>Midlertidig passord:</strong>
+          <span>{{ .Data.temp_password }}</span>
+        </p>
+        <p>
+          <a class="cta" href="{{ .ConfirmationURL }}">Bekreft e-post</a>
         </p>
         <div class="divider"></div>
         <p>
-          Etter at du har klikket, sender vi deg en ny lenke på e-post for å sette passord.
+          Etter at du har bekreftet e-posten kan du logge inn med passordet over.
         </p>
         <p>
           Hvis du ikke forventet denne invitasjonen, kan du trygt ignorere denne e-posten.
