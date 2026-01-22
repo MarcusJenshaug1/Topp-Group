@@ -67,6 +67,10 @@
     --motion-base: 220ms;
     --motion-slow: 360ms;
     --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-premium: var(--ease-premium);
+    --dur-fast: var(--motion-fast);
+    --dur-med: var(--motion-base);
+    --dur-slow: var(--motion-slow);
   }
 
   /* Dark Mode support (not fully used yet but consistent) */

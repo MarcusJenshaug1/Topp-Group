@@ -66,6 +66,17 @@ body {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-med: 1ms;
+    --dur-slow: 1ms;
+    --motion-fast: 1ms;
+    --motion-base: 1ms;
+    --motion-slow: 1ms;
+  }
+}
+
 @layer utilities {
   @media (prefers-reduced-motion: no-preference) {
     .motion-safe\:fade-up {
