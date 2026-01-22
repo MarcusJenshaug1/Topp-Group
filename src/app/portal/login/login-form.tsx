@@ -31,7 +31,7 @@ export function LoginForm() {
 
         if (inviteParam === "1") {
             setStage("invite")
-            setInfo("E-posten din er verifisert. Klikk Fullfør konto for å motta engangskode.")
+            setInfo("E-posten din er verifisert. Klikk Fullfør konto for å få tilsendt en lenke.")
         }
     }, [searchParams])
 
@@ -62,7 +62,7 @@ export function LoginForm() {
 
             if (data.status === "invited") {
                 setStage("invite")
-                setInfo("Du er invitert. Vi sender en engangskode til e-posten din.")
+                setInfo("Du er invitert. Vi sender en lenke til e-posten din.")
                 return
             }
 
@@ -116,7 +116,7 @@ export function LoginForm() {
                 return
             }
 
-            router.push(`/portal/complete?email=${encodeURIComponent(email)}`)
+            router.push(`/portal/invite-sent?email=${encodeURIComponent(email)}`)
         } catch {
             setError("Noe gikk galt. Prøv igjen.")
         } finally {
@@ -162,7 +162,7 @@ export function LoginForm() {
                         <CardDescription>
                             {stage === "email" && "Skriv inn e-posten din for å fortsette."}
                             {stage === "password" && "Skriv inn passordet ditt for å få tilgang til portalen."}
-                            {stage === "invite" && "Vi sender en engangskode, og du velger passord på neste steg."}
+                            {stage === "invite" && "Vi sender deg en lenke for å fullføre registreringen."}
                         </CardDescription>
                     </CardHeader>
                     <form onSubmit={stage === "password" ? handleLogin : stage === "invite" ? handleInvite : handleEmailCheck}>

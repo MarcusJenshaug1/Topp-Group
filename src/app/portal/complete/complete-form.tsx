@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -21,22 +21,67 @@ export function CompleteAccountForm() {
     const [confirm, setConfirm] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [ready, setReady] = useState(true)
+    const [showOtpFields, setShowOtpFields] = useState(true)
+
+    useEffect(() => {
+        const init = async () => {
+            setError(null)
+
+            const codeParam = searchParams.get("code")
+            if (codeParam) {
+                const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(codeParam)
+                if (exchangeError) {
+                    setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                }
+                setShowOtpFields(false)
+                setReady(true)
+                return
+            }
+
+            if (typeof window !== "undefined") {
+                const hash = window.location.hash.replace(/^#/, "")
+                const params = new URLSearchParams(hash)
+                const accessToken = params.get("access_token")
+                const refreshToken = params.get("refresh_token")
+
+                if (accessToken && refreshToken) {
+                    const { error: setErrorSession } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                    })
+                    if (setErrorSession) {
+                        setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                    }
+                    setShowOtpFields(false)
+                    setReady(true)
+                    return
+                }
+            }
+
+            setReady(true)
+        }
+
+        init()
+    }, [searchParams, supabase])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError(null)
 
-        if (!email.trim()) {
-            setError("E-post mangler")
-            setLoading(false)
-            return
-        }
+        if (showOtpFields) {
+            if (!email.trim()) {
+                setError("E-post mangler")
+                setLoading(false)
+                return
+            }
 
-        if (!code.trim()) {
-            setError("Engangskode mangler")
-            setLoading(false)
-            return
+            if (!code.trim()) {
+                setError("Engangskode mangler")
+                setLoading(false)
+                return
+            }
         }
 
         if (password.length < 8) {
@@ -52,15 +97,23 @@ export function CompleteAccountForm() {
         }
 
         try {
-            const { error: verifyError } = await supabase.auth.verifyOtp({
-                email: email.trim(),
-                token: code.trim(),
-                type: "email",
-            })
+            if (showOtpFields) {
+                const { error: verifyError } = await supabase.auth.verifyOtp({
+                    email: email.trim(),
+                    token: code.trim(),
+                    type: "email",
+                })
 
-            if (verifyError) {
-                setError(verifyError.message)
-                return
+                if (verifyError) {
+                    setError(verifyError.message)
+                    return
+                }
+            } else {
+                const { data } = await supabase.auth.getSession()
+                if (!data.session) {
+                    setError("Lenken er ugyldig eller utløpt. Be om ny invitasjon.")
+                    return
+                }
             }
 
             const { error: updateError } = await supabase.auth.updateUser({ password })
@@ -85,7 +138,9 @@ export function CompleteAccountForm() {
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold">Fullfør konto</CardTitle>
                         <CardDescription>
-                            Skriv inn engangskoden fra e-post og velg et passord.
+                            {showOtpFields
+                                ? "Skriv inn engangskoden fra e-post og velg et passord."
+                                : "Velg et passord for å fullføre kontoen din."}
                         </CardDescription>
                     </CardHeader>
                     <form onSubmit={handleSubmit}>
@@ -96,31 +151,35 @@ export function CompleteAccountForm() {
                                     {error}
                                 </div>
                             )}
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium leading-none">
-                                    E-post
-                                </label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor="code" className="text-sm font-medium leading-none">
-                                    Engangskode
-                                </label>
-                                <Input
-                                    id="code"
-                                    inputMode="numeric"
-                                    placeholder="123456"
-                                    value={code}
-                                    onChange={(e) => setCode(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            {showOtpFields && (
+                                <>
+                                    <div className="space-y-2">
+                                        <label htmlFor="email" className="text-sm font-medium leading-none">
+                                            E-post
+                                        </label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="code" className="text-sm font-medium leading-none">
+                                            Engangskode
+                                        </label>
+                                        <Input
+                                            id="code"
+                                            inputMode="numeric"
+                                            placeholder="123456"
+                                            value={code}
+                                            onChange={(e) => setCode(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                </>
+                            )}
                             <div className="space-y-2">
                                 <label htmlFor="password" className="text-sm font-medium leading-none">
                                     Passord
@@ -147,7 +206,7 @@ export function CompleteAccountForm() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button type="submit" className="w-full" disabled={loading}>
+                            <Button type="submit" className="w-full" disabled={loading || !ready}>
                                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Sett passord
                             </Button>
