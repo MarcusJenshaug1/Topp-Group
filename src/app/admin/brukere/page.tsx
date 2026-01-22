@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { Container } from "@/components/ui/container"
@@ -10,6 +11,24 @@ import { createUserSilently, sendInviteEmail, updateUserRole, updateUserName, de
 
 export default async function AdminUsersPage() {
     const supabase = await createClient()
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect("/portal/login")
+    }
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single()
+
+    if (!profile || profile.role !== "admin") {
+        redirect("/admin")
+    }
 
     const { data: profiles } = await supabase
         .from("profiles")

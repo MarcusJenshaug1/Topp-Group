@@ -1,6 +1,28 @@
+import { redirect } from "next/navigation"
+import { createClient } from "@/lib/supabase/server"
 import { Container } from "@/components/ui/container"
 
-export default function AdminSettingsPage() {
+export default async function AdminSettingsPage() {
+    const supabase = await createClient()
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect("/portal/login")
+    }
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single()
+
+    if (!profile || profile.role !== "admin") {
+        redirect("/admin")
+    }
+
     return (
         <Container className="space-y-6">
             <div>

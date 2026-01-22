@@ -26,6 +26,7 @@ export default async function AdminLayout({
 
     // Check role here if custom claims or DB query
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const isAdmin = profile?.role === 'admin'
 
     if (profile && !['admin', 'editor'].includes(profile.role)) {
         redirect("/portal") // Not authorized for admin
@@ -65,18 +66,22 @@ export default async function AdminLayout({
                             Dokumenter
                         </Button>
                     </Link>
-                    <Link href="/admin/brukere">
-                        <Button variant="ghost" className="w-full justify-start">
-                            <Users className="mr-2 h-4 w-4" />
-                            Brukere
-                        </Button>
-                    </Link>
-                    <Link href="/admin/innstillinger">
-                        <Button variant="ghost" className="w-full justify-start">
-                            <Settings className="mr-2 h-4 w-4" />
-                            Innstillinger
-                        </Button>
-                    </Link>
+                    {isAdmin && (
+                        <>
+                            <Link href="/admin/brukere">
+                                <Button variant="ghost" className="w-full justify-start">
+                                    <Users className="mr-2 h-4 w-4" />
+                                    Brukere
+                                </Button>
+                            </Link>
+                            <Link href="/admin/innstillinger">
+                                <Button variant="ghost" className="w-full justify-start">
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    Innstillinger
+                                </Button>
+                            </Link>
+                        </>
+                    )}
                     <div className="pt-4 mt-auto">
                         <form action="/auth/signout" method="post">
                             <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive">
